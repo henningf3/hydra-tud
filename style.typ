@@ -76,7 +76,7 @@
   set math.equation(numbering: n => {
     let appx = state("backmatter", false).get()
     let hdr = counter(heading).get()
-    let format = if appx { "A.1" } else { "1.1" }
+    let format = if appx { "(A.1)" } else { "(1.1)" }
     numbering(format, hdr.first(), n)
   }, block: true)
 
