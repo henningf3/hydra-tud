@@ -3,9 +3,7 @@ Hydra based Typst template for thesis use at TU Dresden.
 
 ## Usage information
 
-### Git Submodule
-
-### Copying over
+See [template document](https://github.com/henningf3/hydra-tud-example)
 
 # Authors
 
