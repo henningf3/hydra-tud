@@ -1,5 +1,8 @@
 # Hydra TUD
-Hydra based Typst template for thesis use at TU Dresden.
+Hydra-based Typst template for thesis use at TU Dresden.
+
+The authors do not raise the aspiration to create a fully flexible design that is implemented for every scenario.
+Feel free to contribute and add missing features or bug fixes.
 
 ## Usage information
 
