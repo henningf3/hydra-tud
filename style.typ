@@ -21,8 +21,8 @@
   logo_height: 2cm,
   font-name: font-name,
   body-size: body-size,
-  info-size: info-size, 
-  doc
+  info-size: info-size,
+  doc,
 ) = {
   /*
    * Text Flow
@@ -43,17 +43,30 @@
   set page(numbering: "I")
 
   // Heading size and spacing settings
-  show heading.where(level: 1): it => pagebreak(weak: true) + text(size:  1.6em)[#it] + v(1em)
-  show heading.where(level: 2): it => text(size:  1.4em)[#it] +v(0.7em)
-  show heading.where(level: 3): it => text(size:  1.2em)[#it] +v(0.6em)
+  show heading.where(level: 1): it => pagebreak(weak: true) + text(size: 1.6em)[#it] + v(1em)
+  show heading.where(level: 2): it => text(size: 1.4em)[#it] + v(0.7em)
+  show heading.where(level: 3): it => text(size: 1.2em)[#it] + v(0.6em)
+
+  show heading: it => {
+    if (it.level > 3) {
+      // Heading only numbered up to level 3
+      block(it.body)
+    } else {
+      it
+    }
+  }
 
   show ref: it => {
     let el = it.element
     if el != none and el.func() == heading and el.level == 1 and el.supplement != [Appendix] {
-      link(el.location(), "Chapter " + numbering(
-        el.numbering,
-        ..counter(heading).at(el.location())
-      ))
+      link(
+        el.location(),
+        "Chapter "
+          + numbering(
+            el.numbering,
+            ..counter(heading).at(el.location()),
+          ),
+      )
     } else { it }
   }
 
@@ -73,45 +86,47 @@
   })
 
   // set equation numbering, depends on state "backmatter"
-  set math.equation(numbering: n => {
-    let appx = state("backmatter", false).get()
-    let hdr = counter(heading).get()
-    let format = if appx { "(A.1)" } else { "(1.1)" }
-    numbering(format, hdr.first(), n)
-  }, block: true)
+  set math.equation(
+    numbering: n => {
+      let appx = state("backmatter", false).get()
+      let hdr = counter(heading).get()
+      let format = if appx { "(A.1)" } else { "(1.1)" }
+      numbering(format, hdr.first(), n)
+    },
+    block: true,
+  )
 
   // reset the counters wich each major heading
   show heading.where(level: 1): hdr => {
-    counter(figure.where(kind:image)).update(0)
-    counter(figure.where(kind:table)).update(0)
+    counter(figure.where(kind: image)).update(0)
+    counter(figure.where(kind: table)).update(0)
     counter(math.equation).update(0)
     hdr
   }
-  
-  
+
+
   //
   // Front Page
   //
 
   // Format Page, No Numbering on Title Page
   set page(margin: (left: 1.1cm + 1.75cm, top: 1.35cm + 2.1cm), numbering: none)
-  
+
   // Place TU Logo in the top left corner
   place(
-      top + left,
-      dx: -1.82cm,  
-      dy: -2.1cm,
-      image(if language == "de" {logo_de} else if language == "en" {logo_en} , height: logo_height),
+    top + left,
+    dx: -1.82cm,
+    dy: -2.1cm,
+    image(if language == "de" { logo_de } else if language == "en" { logo_en }, height: logo_height),
   )
-  
- 
 
-    // Place structure unit below (only if something provided)
+
+  // Place structure unit below (only if something provided)
   if faculty != none or institute != none or chair != none [
     #box(
       width: 100%,
       outset: (y: 4pt),
-      stroke: (top: black, bottom: black)
+      stroke: (top: black, bottom: black),
     )[
       #if faculty != none [ *#faculty* \ ]
       #if institute != none and faculty != none [
@@ -130,7 +145,7 @@
       dy: 15%,
       [
         #if title != none and subtitle != none [
-          #text(30pt, weight: "bold", title) 
+          #text(30pt, weight: "bold", title)
 
           #text(20pt, subtitle)
         ] else if title != none [
@@ -138,7 +153,7 @@
         ] else if subtitle != none [
           #text(20pt, subtitle)
         ]
-      ]
+      ],
     )
   ]
 
@@ -148,13 +163,17 @@
       dy: 45%,
       grid(
         row-gutter: 4%,
-        ..authors.map((author) => [
+        ..authors.map(author => [
           *#author.first_name #author.surname*\
-          #if author.keys().contains("matriculationno") and language == "de" [_Matrikelnummer:_ #author.matriculationno \ ]
-          #if author.keys().contains("matriculationno") and language == "en" [_Matriculation No.:_ #author.matriculationno \ ]
+          #if (
+            author.keys().contains("matriculationno") and language == "de"
+          ) [_Matrikelnummer:_ #author.matriculationno \ ]
+          #if (
+            author.keys().contains("matriculationno") and language == "en"
+          ) [_Matriculation No.:_ #author.matriculationno \ ]
           #if author.keys().contains("email") [_E-Mail:_ #link("mailto:" + author.email)]
         ]),
-      )
+      ),
     )
   }
 
@@ -173,9 +192,9 @@
             *Betreuer:*\
             #list(
               tight: true,
-              ..supervisors.map((sup) => [
+              ..supervisors.map(sup => [
                 - #sup.name#if sup.keys().contains("email") and sup.email != "" [ #link("mailto:" + sup.email) ]
-              ])
+              ]),
             )
           ]
         }
@@ -189,18 +208,18 @@
             *Supervisor#if supervisors.len() > 1 [s]:*\
             #list(
               tight: true,
-              ..supervisors.map((sup) => [
+              ..supervisors.map(sup => [
                 #sup.name#if sup.keys().contains("email") and sup.email != "" [ (#link("mailto:" + sup.email)) ]
-              ])
+              ]),
             )
           ]
         }
-      }
+      },
     )
   }
 
-  pagebreak() // end of title page  
-  
+  pagebreak() // end of title page
+
   //
   // Content
   //
@@ -220,8 +239,8 @@
     set block(above: 2 * body-size)
     set text(font: font-name, weight: "bold", size: info-size)
     link(
-      it.element.location(),    // make entry linkable
-      it.indented(it.prefix(), it.body() + box(width: 1fr,) +  strong(it.page()))
+      it.element.location(), // make entry linkable
+      it.indented(it.prefix(), it.body() + box(width: 1fr) + strong(it.page())),
     )
   }
 
@@ -230,16 +249,14 @@
     set block(above: 0.8 * body-size)
     set text(font: font-name, size: info-size)
     link(
-      it.element.location(),  // make entry linkable
+      it.element.location(), // make entry linkable
       it.indented(
-          it.prefix(),
-          it.body() + "  " +
-            box(width: 1fr, repeat([.], gap: 2pt)) +
-            "  " + it.page()
-      )
+        it.prefix(),
+        it.body() + "  " + box(width: 1fr, repeat([.], gap: 2pt)) + "  " + it.page(),
+      ),
     )
   }
-  
+
   outline(title: title, depth: depth, indent: auto)
 
   pagebreak() // end of outline
@@ -253,8 +270,8 @@
   set page(
     margin: auto,
     numbering: "i", // roman page numbers for preamble
-    header: [#context hydra(1) \ #line(start: (0%, 0% -.2cm), length: 100%)],
-    footer: context[#line(start: (0%, 0% -.2cm) ,length: 100%) #align(center, counter(page).display("i"))],
+    header: [#context hydra(1) \ #line(start: (0%, 0% - .2cm), length: 100%)],
+    footer: context [#line(start: (0%, 0% - .2cm), length: 100%) #align(center, counter(page).display("i"))],
   )
 
   // Unnumbered headings in preamble
@@ -276,22 +293,14 @@
   set page(
     margin: auto,
     numbering: "1", // needed for outline
-    header: [#context hydra(1) \ #line(start: (0%, 0% -.2cm), length: 100%)],
-    footer: context[#line(start: (0%, 0% -.2cm) ,length: 100%) #align(center, counter(page).display("1"))],
+    header: [#context hydra(1) \ #line(start: (0%, 0% - .2cm), length: 100%)],
+    footer: context [#line(start: (0%, 0% - .2cm), length: 100%) #align(center, counter(page).display("1"))],
   )
   counter(page).update(1)
 
   set heading(numbering: "1.1")
   counter(heading).update(0)
 
-  show heading: it => {
-    if (it.level > 3){ // Heading only numbered up to level 3
-        block(it.body)
-    } else {
-        block(counter(heading).display() + " " + it.body)
-    }
-  }
-  
   //
   // Content
   //
@@ -299,7 +308,7 @@
 }
 
 
-#let tud-appendix(doc) =  {
+#let tud-appendix(doc) = {
   set heading(numbering: "A.1", supplement: "Appendix")
   counter(heading).update(0)
   state("backmatter").update(true)
