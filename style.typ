@@ -288,7 +288,7 @@
     if (it.level > 3){ // Heading only numbered up to level 3
         block(it.body)
     } else {
-        block(counter(heading).display() + " " + it.body)
+        it
     }
   }
   
