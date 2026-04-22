@@ -211,7 +211,9 @@
 #let create-tud-outline(
   font-name: font-name,
   body-size: body-size,
-  info-size: info-size
+  info-size: info-size,
+  title: auto,
+  depth: 4,
 ) = {
   // top-level TOC entries in bold without filling
   show outline.entry.where(level: 1): it => {
@@ -238,7 +240,7 @@
     )
   }
   
-  outline(indent: auto)
+  outline(title: title, depth: depth, indent: auto)
 
   pagebreak() // end of outline
 }
@@ -282,6 +284,13 @@
   set heading(numbering: "1.1")
   counter(heading).update(0)
 
+  show heading: it => {
+    if (it.level >= 4){
+        block(it.body)
+    } else {
+        block(counter(heading).display() + " " + it.body)
+    }
+  }
   
   //
   // Content
