@@ -307,7 +307,8 @@
     )
   }
   
-  outline(indent: auto)
+  // show outline, hide all sections with a level greater 3
+  outline(indent: auto, depth: 3)
 
   pagebreak() // end of outline
 }
