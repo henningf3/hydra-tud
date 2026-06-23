@@ -25,6 +25,12 @@
   doc,
 ) = {
   /*
+   * Meta Information
+   */
+  let author-string = authors.map(a => a.first_name + " " + a.surname).join(", ")
+  set document(title: title, description: subtitle, author: author-string)
+
+  /*
    * Text Flow
    */
   set text(
