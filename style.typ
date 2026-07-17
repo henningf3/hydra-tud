@@ -75,6 +75,13 @@
   set par(justify: true, leading: 0.8em)
   set page(numbering: "I")
 
+  // blank pages after pagebreaks for print
+  show selector.or(
+    pagebreak.where(to: "odd"),
+    pagebreak.where(to: "even"),
+  ): set page(header: none, footer: none, numbering: none)
+
+
   // Heading size and spacing settings, breaks in print mode
   show heading: it => {
     if (it.level == 1) {
