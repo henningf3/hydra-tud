@@ -1,5 +1,9 @@
 #import "@preview/hydra:0.6.1": hydra
 
+// typst fonts:
+#let font-typst = "Libertinus Serif"
+#let font-typst-math = "Libertinus Math" // not bundled with typst, must be installed manually
+
 // latex fonts:
 #let font-latex = "New Computer Modern"
 #let font-latex-math = "New Computer Modern Math"
