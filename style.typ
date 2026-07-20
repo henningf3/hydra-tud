@@ -147,7 +147,7 @@
       let format = if appx { equation-numbering-appendix } else { equation-numbering-body }
       numbering(format, hdr.first(), n)
     },
-    block: true,
+    //block: true,  // FIX: causes the axes of a lq.plot to break
     supplement: equation-supplement
   )
 
