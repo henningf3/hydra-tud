@@ -1,16 +1,21 @@
 #import "@preview/hydra:0.6.1": hydra
 
-// typst fonts:
-#let font-typst = "Libertinus Serif"
-#let font-typst-math = "Libertinus Math" // not bundled with typst, must be installed manually
+// typst-style fonts:
+#let font-libertinus = "Libertinus Serif" // = font-typst
+#let font-libertinus-math = "Libertinus Math" // not bundled with typst, must be installed manually
+#let font-libertinus-code = "Libertinus Mono" // not bundled with typst, must be installed manually
+
+#let font-typst-code = "DejaVu Sans Mono"
 
 // latex fonts:
 #let font-latex = "New Computer Modern"
-#let font-latex-math = "New Computer Modern Math"
+#let font-latex-math = "New Computer Modern Math" // = font-typst-math
+#let font-latex-code = "Computer Modern Typewriter" // not bundled with typst, must be installed manually
 
 // TUD corporate fonts:
 #let font-tud-corporate = "Noto Sans"
 #let font-tud-corporate-math = "Noto Sans Math" // not bundled with typst, must be installed manually
+#let font-tud-corporate-math = "Noto Sans Mono" // not bundled with typst, must be installed manually
 
 
 #let tud-doc(
@@ -46,6 +51,7 @@
   logo_height: 2cm,
   font-text: font-latex,  // text font
   font-math: font-latex-math,  // math font
+  font-code: font-typst-code,
   math-weight: 400,
   body-size: 11pt,
   info-size: 10pt,
@@ -138,6 +144,13 @@
   //
   show math.equation: set text(font: font-math) // set math font
   set ref(supplement: equation-supplement) // remove default supplement
+
+  show math.equation: set block(breakable: true)
+
+  //
+  // Code
+  //
+  show raw: set text(font: font-code)
 
   // set equation numbering scheme, depending if we are within the appendix or not
   set math.equation(
