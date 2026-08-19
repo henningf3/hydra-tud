@@ -32,9 +32,9 @@
    * Content Settings
    */
   equation-numbering-always: false, // if true, every equation will get a numbering; if false, only tagged equations will get a numbering
-  equation-supplement: none,
-  equation-numbering-body: "1.1",
-  equation-numbering-appendix: "A.1",
+  equation-supplement: "Equation",
+  equation-numbering-body: "(1.1)",
+  equation-numbering-appendix: "(A.1)",
   figure-numbering-body: "1.1",
   figure-numbering-appendix: "A.1",
 
