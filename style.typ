@@ -17,6 +17,10 @@
 #let font-tud-corporate-math = "Noto Sans Math" // not bundled with typst, must be installed manually
 #let font-tud-corporate-math = "Noto Sans Mono" // not bundled with typst, must be installed manually
 
+// Margins
+#let print-margin = (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 2.5cm)
+#let digital-margin = (inside: 2.5cm, outside: 2.5cm, top: 2.5cm, bottom: 2.5cm)
+
 
 #let tud-doc(
   /*
@@ -191,32 +195,34 @@
   //
 
   // Format Page, No Numbering on Title Page
-  set page(margin: (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 2.5cm), numbering: none) if print_compile
-  set page(margin: auto, numbering: none) if not print_compile
+  set page(margin: print-margin, numbering: none) if print_compile
+  set page(margin: digital-margin, numbering: none) if not print_compile
 
-  // Place TU Logo in the top left corner
-  place(
-      top + left,
-      dx: -1.82cm,
-      dy: -2.1cm,
-      image(if language == "de" {logo_de} else if language == "en" {logo_en} , height: logo_height),
-  )
+
 
   // Place structure unit below (only if something provided)
   if faculty != none or institute != none or chair != none [
     #box(
       width: 100%,
-      outset: (y: 4pt),
-      stroke: (top: black, bottom: black)
+      //outset: (y: 4pt),
+      stroke: (top: black, bottom: black),
+      height: logo_height
     )[
-      #if faculty != none [ *#faculty* \ ]
-      #if institute != none and faculty != none [
-        #institute, #chair
-      ] else if institute != none [
-        #institute
-      ] else if chair != none [
-        #chair
+      #align(left + horizon)[
+        #if faculty != none [ *#faculty* \ ]
+        #if institute != none and faculty != none [
+          #institute \
+          #chair
+        ] else if institute != none [
+          #institute
+        ] else if chair != none [
+          #chair
+        ]
       ]
+      #place(
+          top + right,
+          image(if language == "de" {logo_de} else if language == "en" {logo_en} , height: logo_height),
+      )
     ]
   ]
 
@@ -343,7 +349,7 @@
 }
 
 #let tud-preamble(print_compile: false, doc) = {
-  let target-margin = if print_compile { (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 2.5cm) } else { auto }
+  let target-margin = if print_compile { print-margin } else { digital-margin }
 
   // Break to odd page before setting Roman numeral counter
   if print_compile {
@@ -375,7 +381,7 @@
 }
 
 #let tud-body(print_compile: false, doc) = {
-  let target-margin = if print_compile { (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 2.5cm) } else { auto }
+  let target-margin = if print_compile { print-margin } else { digital-margin }
 
   // Break to odd page before setting Roman numeral counter
   if print_compile {
