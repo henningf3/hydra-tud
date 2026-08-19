@@ -160,7 +160,6 @@
       let format = if appx { equation-numbering-appendix } else { equation-numbering-body }
       numbering(format, hdr.first(), n)
     },
-    //block: true,  // FIX: causes the axes of a lq.plot to break
     supplement: equation-supplement
   )
 
@@ -192,7 +191,8 @@
   //
 
   // Format Page, No Numbering on Title Page
-  set page(margin: (left: 1.1cm + 1.75cm, top: 1.35cm + 2.1cm), numbering: none)
+  set page(margin: (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 2.5cm), numbering: none) if print_compile
+  set page(margin: auto, numbering: none) if not print_compile
 
   // Place TU Logo in the top left corner
   place(
@@ -344,6 +344,14 @@
 
 #let tud-preamble(print_compile: false, doc) = {
   let target-margin = if print_compile { (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 2.5cm) } else { auto }
+
+  // Break to odd page before setting Roman numeral counter
+  if print_compile {
+    pagebreak(to: "odd", weak: true)
+  } else {
+    pagebreak(weak: true)
+  }
+
   //
   // Set Page Style
   // Chapter in Page Header, Page Number in Footer
@@ -368,6 +376,14 @@
 
 #let tud-body(print_compile: false, doc) = {
   let target-margin = if print_compile { (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 2.5cm) } else { auto }
+
+  // Break to odd page before setting Roman numeral counter
+  if print_compile {
+    pagebreak(to: "odd", weak: true)
+  } else {
+    pagebreak(weak: true)
+  }
+
   //
   // Set Page Style
   // Chapter in Page Header, Page Number in Footer
