@@ -204,7 +204,7 @@
   if faculty != none or institute != none or chair != none [
     #box(
       width: 100%,
-      //outset: (y: 4pt),
+      outset: (y: 4pt),
       stroke: (top: black, bottom: black),
       height: logo_height
     )[
