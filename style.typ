@@ -44,6 +44,7 @@
   equation-supplement: "Equation",
   equation-numbering-body: "(1.1)",
   equation-numbering-appendix: "(A.1)",
+  figure-supplement: "Figure",
   figure-numbering-body: "1.1",
   figure-numbering-appendix: "A.1",
 
@@ -142,13 +143,13 @@
     let format = if appx { figure-numbering-appendix } else { figure-numbering-body }
     numbering(format, hdr.first(), n)
   })
+  set figure(supplement: figure-supplement) // change default supplement
 
   //
   // Equations
   //
   show math.equation: set text(font: font-math) // set math font
-  set ref(supplement: equation-supplement) // remove default supplement
-
+  set math.equation(supplement: equation-supplement) // change default supplement
   show math.equation: set block(breakable: true)
 
   //
