@@ -96,24 +96,30 @@
     pagebreak.where(to: "even"),
   ): set page(header: none, footer: none, numbering: none)
 
-
   // Heading size and spacing settings, breaks in print mode
   show heading: it => {
     if (it.level == 1) {
-    if (print_compile) {
+      if (print_compile) {
         pagebreak(weak: true, to: "odd") + text(size: 1.6em)[#it] + v(1em)
       } else {
         pagebreak(weak: true) + text(size: 1.6em)[#it] + v(1em)
       }
-    } else if (it.level==2) {
+    } else if (it.level == 2) {
       text(size: 1.4em)[#it] + v(0.7em)
-    } else if (it.level==3) {
+    } else if (it.level == 3) {
       text(size: 1.2em)[#it] + v(0.6em)
     } else {
       // Heading only numbered up to level 3
       block(it.body)
     }
   }
+  // Prevent headings of level 4 or higher to appear in the bookmarks of the PDF
+  // Apparently there is not better solution than writing theses lines explicitly,
+  // using a loop does not work!
+  show heading.where(level: 4): set heading(bookmarked: false)
+  show heading.where(level: 5): set heading(bookmarked: false)
+  show heading.where(level: 6): set heading(bookmarked: false)
+  show heading.where(level: 7): set heading(bookmarked: false)
 
   show ref: it => {
     let el = it.element
