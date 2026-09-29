@@ -1,4 +1,4 @@
-#import "@preview/hydra:0.6.1": hydra
+#import "@preview/hydra:0.6.3": hydra
 
 // typst-style fonts:
 #let font-libertinus = "Libertinus Serif" // = font-typst
