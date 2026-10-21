@@ -21,6 +21,9 @@
 #let print-margin = (inside: 3cm, outside: 2cm, top: 2.5cm, bottom: 2.5cm)
 #let digital-margin = (inside: 2.5cm, outside: 2.5cm, top: 2.5cm, bottom: 2.5cm)
 
+// Allows long and short captions for figures for locally and list of figures, respectively
+#let flex-caption(long, short) = context if state("in-outline", false).get() { short } else { long }
+
 
 #let tud-doc(
   /*
@@ -196,6 +199,15 @@
     hdr
   }
 
+  // 
+  // Long and Short Figure Captions
+  // 
+  let in-outline = state("in-outline", false)
+  show outline: it => {
+    in-outline.update(true)
+    it
+    in-outline.update(false)
+  }
 
   //
   // Front Page
