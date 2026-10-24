@@ -26,23 +26,51 @@
 
 
 #let tud-doc(
-  /*
-   * Front Page Entries
-   */
   title: none,
   subtitle: none,
-  authors: (), // e.g., ((first_name: "Max", surname: "Mustermann", matriculationno: "123", email: "x@y"), ...); matriculationno and email are optional
+  
+  // example author entry:
+  //  (
+  //    first-name: "Max",
+  //    last-name: "Mustermann",
+  //    matriculationno: 123456789,
+  //    email: "security@nsa.gov",
+  //    birth: (date: datetime(year: 1970, month: 01, day: 01), place: "Bielefeld"),
+  //  )
+  // matriculationno, email, and birth are optional
+  authors: (),
+
   faculty: none,
   institute: none,
   chair: none,
-  supervisors: (), // e.g., ((name: "Dr. X", email: "x@y"), ...)
-  language: "en",  // "de" (German) or "en" (English)
-  print_compile: false,
-  date: none, // pass a datetime; if none, the date block is omitted. Can be used for instance as a submission date
 
-  /*
-   * Content Settings
-   */
+  // example supervisor entry:
+  //  (
+  //    first-name: "Anna",
+  //    last-name: "Lüse",
+  //    email: "was.geht@nsa.gov",
+  //  )
+  // the whole supervisors parameter is optional and email is optional for every entry
+  supervisors: (),
+
+  // example examiner entry:
+  //  (
+  //    first-name: "Peter",
+  //    last-name: "Silie",
+  //    email: "nicht.viel@nsa.gov",
+  //  )
+  // the whole examiners parameter is optional and email is optional for every entry
+  examiners: (),
+
+  language: "en",  // "de" (German) or "en" (English)
+  print-compile: false,
+
+  date-deadline: none, // datetime, optional
+  date-submission: none, // datetime, optional
+
+  //
+  // Content Settings
+  //
   equation-numbering-always: false, // if true, every equation will get a numbering; if false, only tagged equations will get a numbering
   equation-supplement: "Equation",
   equation-numbering-body: "(1.1)",
@@ -51,9 +79,9 @@
   figure-numbering-body: "1.1",
   figure-numbering-appendix: "A.1",
 
-  /*
-   * Optional Branding Overrides
-   */
+  //
+  // Optional Branding Overrides
+  //
   logo_de: "logo/TUD_Logo_RGB_horizontal_schwarz_de.svg",
   logo_en: "logo/TUD_Logo_RGB_horizontal_schwarz_en.svg",
   logo_height: 2cm,
@@ -69,15 +97,20 @@
   state("body-size").update(body-size)
   state("info-size").update(info-size)
 
-  /*
-   * Document Meta Information
-   */
-  let author-string = authors.map(a => a.first_name + " " + a.surname).join(", ")
-  set document(title: title, description: subtitle, author: author-string)
+  //
+  // Document Meta Information
+  //
+  let author-string = authors.map(a => a.first-name + " " + a.last-name).join(", ")
+  set document(
+    title: title,
+    description: subtitle,
+    author: author-string,
+    date: date-submission
+  )
 
-  /*
-   * Text Flow
-   */
+  //
+  // Text Flow
+  //
   set text(
     font: font-text,
     lang: language,
@@ -102,7 +135,7 @@
   // Heading size and spacing settings, breaks in print mode
   show heading: it => {
     if (it.level == 1) {
-      if (print_compile) {
+      if (print-compile) {
         pagebreak(weak: true, to: "odd") + text(size: 1.6em)[#it] + v(1em)
       } else {
         pagebreak(weak: true) + text(size: 1.6em)[#it] + v(1em)
@@ -214,8 +247,8 @@
   //
 
   // Format Page, No Numbering on Title Page
-  set page(margin: print-margin, numbering: none) if print_compile
-  set page(margin: digital-margin, numbering: none) if not print_compile
+  set page(margin: print-margin, numbering: none) if print-compile
+  set page(margin: digital-margin, numbering: none) if not print-compile
 
 
 
@@ -270,55 +303,89 @@
       grid(
         row-gutter: 4%,
         ..authors.map((author) => [
-          *#author.first_name #author.surname*\
-          #if author.keys().contains("matriculationno") and language == "de" [_Matrikelnummer:_ #author.matriculationno \ ]
-          #if author.keys().contains("matriculationno") and language == "en" [_Matriculation No.:_ #author.matriculationno \ ]
-          #if author.keys().contains("email") [_E-Mail:_ #link("mailto:" + author.email)]
+          *#author.first-name #author.last-name*\
+          #if language == "de" {
+            if author.keys().contains("birth") [Geboren am  #author.birth.date.display("[day padding:none] [month repr:long] [year]") in #author.birth.place\ ]
+            if author.keys().contains("matriculationno") [Matrikelnummer: #author.matriculationno \ ]
+          } else if language == "en" {
+            if author.keys().contains("birth") [Born on  #author.birth.date.display("[day padding:none] [month repr:long] [year]") in #author.birth.place\ ]
+            if author.keys().contains("matriculationno") [Matriculation No.: #author.matriculationno \ ]
+          }
+          #if author.keys().contains("email") [E-Mail: #link("mailto:" + author.email)]
         ]),
       )
     )
   }
 
-  // Submission date and Supervisor placement
-  if (date != none) or (supervisors.len() > 0) {
-    place(
-      bottom,
-      {
-        if language == "de" {
-          if date != none [
-            *Abgabedatum*\
-            #date.display("[day].[month].[year]")
-            #v(5%)
-          ]
-          if supervisors.len() > 0 [
-            *Betreuer:*\
-            #list(
-              tight: true,
-              ..supervisors.map((sup) => [
-                - #sup.name#if sup.keys().contains("email") and sup.email != "" [ #link("mailto:" + sup.email) ]
-              ])
-            )
-          ]
-        }
-        if language == "en" {
-          if date != none [
-            *Date of Submission*\
-            #date.display("[day].[month].[year]")
-            #v(5%)
-          ]
-          if supervisors.len() > 0 [
-            *Supervisor#if supervisors.len() > 1 [s]:*\
-            #list(
-              tight: true,
-              ..supervisors.map((sup) => [
-                #sup.name#if sup.keys().contains("email") and sup.email != "" [ (#link("mailto:" + sup.email)) ]
-              ])
-            )
-          ]
-        }
+  place(
+    bottom,
+    {
+      if language == "de" {
+        grid(
+          columns: 2,
+          column-gutter: 1em,
+          row-gutter: 1em,
+          ..if date-deadline != none {(
+            [*Einzureichen:*], [#date-deadline.display("[day].[month].[year]")]
+          )} else {()},
+          ..if date-submission != none {(
+            [*Abgabedatum:*], [#date-submission.display("[day].[month].[year]")]
+          )} else {()}
+        )
+        v(5%)
+        if supervisors.len() > 0 [
+          *Betreuer:*\
+          #list(
+            tight: true,
+            ..supervisors.map((sup) => [
+              #sup.name#if sup.keys().contains("email") and sup.email != "" [ #link("mailto:" + sup.email) ]
+            ])
+          )
+        ]
+        if examiners.len() > 0 [
+          *Prüfer:*\
+          #list(
+            tight: true,
+            ..examiners.map((sup) => [
+              #sup.name#if sup.keys().contains("email") and sup.email != "" [ #link("mailto:" + sup.email) ]
+            ])
+          )
+        ]
       }
-    )
-  }
+      if language == "en" {
+        grid(
+          columns: 2,
+          column-gutter: 1em,
+          row-gutter: 1em,
+          ..if date-deadline != none {(
+            [*Submission deadline:*], [#date-deadline.display("[day padding:none] [month repr:long] [year]")]
+          )} else {()},
+          ..if date-submission != none {(
+            [*Date of submission:*], [#date-submission.display("[day padding:none] [month repr:long] [year]")]
+          )} else {()}
+        )
+        v(5%)
+        if supervisors.len() > 0 [
+          *Supervisor#if supervisors.len() > 1 [s]:*\
+          #list(
+            tight: true,
+            ..supervisors.map((sup) => [
+              #sup.name#if sup.keys().contains("email") and sup.email != "" [ (#link("mailto:" + sup.email)) ]
+            ])
+          )
+        ]
+        if examiners.len() > 0 [
+          *Examiner#if examiners.len() > 1 [s]:*\
+          #list(
+            tight: true,
+            ..examiners.map((sup) => [
+              #sup.name#if sup.keys().contains("email") and sup.email != "" [ (#link("mailto:" + sup.email)) ]
+            ])
+          )
+        ]
+      }
+    }
+  )
 
   pagebreak() // end of title page
 
