@@ -309,7 +309,7 @@
             if author.keys().contains("matriculationno") [Matrikelnummer: #author.matriculationno \ ]
           } else if language == "en" {
             if author.keys().contains("birth") [Born on  #author.birth.date.display("[day padding:none] [month repr:long] [year]") in #author.birth.place\ ]
-            if author.keys().contains("matriculationno") [Matriculation No.: #author.matriculationno \ ]
+            if author.keys().contains("matriculationno") [Matriculation number: #author.matriculationno \ ]
           }
           #if author.keys().contains("email") [E-Mail: #link("mailto:" + author.email)]
         ]),
